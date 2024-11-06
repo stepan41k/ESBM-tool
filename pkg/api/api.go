@@ -20,6 +20,8 @@ func (api *api) Handle() {
 	api.r.HandleFunc("/api/books", api.books).Queries("id", "{id}")
 	api.r.HandleFunc("/api/books", api.books).Queries("name", "{name}")
 	api.r.HandleFunc("/api/books", api.books)
+	api.r.HandleFunc("/api/ping", api.ping)
+	api.r.Use(api.middleware)
 }
 
 func (api *api) ListenAndServe(addr string) error {

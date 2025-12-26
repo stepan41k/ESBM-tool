@@ -1,9 +1,26 @@
 import React, { createContext, useContext, useState } from 'react'
+import type { ReactNode } from 'react'
 
-const GameContext = createContext()
+// Описываем типы
+interface Player {
+	id: number
+	name: string
+	score: number
+}
 
-export const GameProvider = ({ children }) => {
-	const [players, setPlayers] = useState([
+interface GameContextType {
+	players: Player[]
+	activePlayerIdx: number
+	diceValue: number
+	isRolling: boolean
+	rollDice: () => void
+	nextTurn: () => void
+}
+
+const GameContext = createContext<GameContextType | undefined>(undefined)
+
+export const GameProvider = ({ children }: { children: ReactNode }) => {
+	const [players, setPlayers] = useState<Player[]>([
 		{ id: 1, name: 'Игрок 1', score: 0 },
 		{ id: 2, name: 'Игрок 2', score: 0 },
 	])
@@ -11,12 +28,10 @@ export const GameProvider = ({ children }) => {
 	const [diceValue, setDiceValue] = useState(1)
 	const [isRolling, setIsRolling] = useState(false)
 
-	// Логика броска кубика
 	const rollDice = () => {
 		if (isRolling) return
 		setIsRolling(true)
 
-		// Имитация задержки анимации
 		setTimeout(() => {
 			const result = Math.floor(Math.random() * 6) + 1
 			setDiceValue(result)
@@ -25,8 +40,7 @@ export const GameProvider = ({ children }) => {
 		}, 600)
 	}
 
-	// Обновление очков и смена хода
-	const updateScore = points => {
+	const updateScore = (points: number) => {
 		setPlayers(prev =>
 			prev.map((p, idx) => {
 				if (idx === activePlayerIdx) {
@@ -57,4 +71,10 @@ export const GameProvider = ({ children }) => {
 	)
 }
 
-export const useGame = () => useContext(GameContext)
+export const useGame = () => {
+	const context = useContext(GameContext)
+	if (!context) {
+		throw new Error('useGame must be used within a GameProvider')
+	}
+	return context
+}

@@ -1,6 +1,18 @@
 import clsx from 'clsx'
 
-export const PlayerCard = ({ player, isActive }) => {
+// Типизируем пропсы
+interface Player {
+	id: number
+	name: string
+	score: number
+}
+
+interface PlayerCardProps {
+	player: Player
+	isActive: boolean
+}
+
+export const PlayerCard = ({ player, isActive }: PlayerCardProps) => {
 	return (
 		<div
 			className={clsx(

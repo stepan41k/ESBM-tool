@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useGame } from '../context/GameContext'
+import { useGame } from '../context/GameContext.tsx'
 
 export const Dice = () => {
 	const { diceValue, isRolling, rollDice } = useGame()

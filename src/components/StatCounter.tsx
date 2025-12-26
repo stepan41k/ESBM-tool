@@ -85,7 +85,7 @@ export const StatCounter = ({
 					onClick={onIncrement}
 					className={`w-10 h-10 flex items-center justify-center rounded-lg text-white transition-colors shadow-lg ${
 						isMain
-							? 'bg-green-600 hover:bg-green-500'
+							? 'bg-white/10 hover:bg-white/20'
 							: 'bg-white/10 hover:bg-white/20'
 					}`}
 				>

@@ -15,12 +15,14 @@ export interface Player extends PlayerStats {
 	id: number
 	name: string
 	hasEpicResurrection: boolean // <--- НОВОЕ ПОЛЕ
+	isLoser: boolean
 }
 
 interface GameContextType {
 	players: Player[]
 	updateStat: (playerId: number, stat: keyof PlayerStats, delta: number) => void
 	toggleEpicResurrection: (playerId: number) => void // <--- НОВАЯ ФУНКЦИЯ
+	toggleLoser: (playerId: number) => void
 	resetGame: () => void
 }
 
@@ -38,7 +40,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
 	const [players, setPlayers] = useState<Player[]>([
 		// Добавляем флаг false по умолчанию
-		{ id: 1, name: 'Колдун 1', ...initialStats, hasEpicResurrection: false },
+		{ id: 1, name: 'Колдун 1', ...initialStats, hasEpicResurrection: false, isLoser: false },
 	])
 
 	// Переключатель свойства
@@ -52,6 +54,24 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 		)
 	}
 
+	const toggleLoser = (playerId: number) => {
+		setPlayers(prev =>
+			prev.map(p => {
+				if (p.id !== playerId) return p
+
+				const newIsLoser = !p.isLoser
+				let newHp = p.hp
+
+				// Если мы стали лошарой и жизней больше 15 -> срезаем до 15
+				if (newIsLoser && newHp > 15) {
+					newHp = 15
+				}
+
+				return { ...p, isLoser: newIsLoser, hp: newHp }
+			})
+		)
+	}
+
 	const updateStat = (
 		playerId: number,
 		stat: keyof PlayerStats,
@@ -62,6 +82,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 				if (p.id !== playerId) return p
 
 				let newValue = p[stat] + delta
+				
+				const maxHp = p.isLoser ? 15 : 25
 
 				// ЛОГИКА ДЛЯ ЗДОРОВЬЯ
 				if (stat === 'hp') {
@@ -72,12 +94,15 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 								currentPlayers.map(cp => {
 									if (cp.id !== playerId) return cp
 
-									// <--- ПРОВЕРКА ФЛАГА ЗДЕСЬ
-									const targetHp = cp.hasEpicResurrection ? 25 : 20
+									let respawnHp = 20
+									if (cp.hasEpicResurrection) respawnHp = 25
+
+									// Но если Лошара - выше 15 прыгнуть нельзя
+									if (cp.isLoser) respawnHp = 15
 
 									return {
 										...cp,
-										hp: targetHp,
+										hp: respawnHp,
 										deadWizards: cp.deadWizards + 1,
 									}
 								})
@@ -87,12 +112,12 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 						return { ...p, hp: 0 }
 					}
 
-					if (newValue > 25) newValue = 25
-				} else {
-					if (newValue < 0) newValue = 0
-				}
+					if (newValue > maxHp) newValue = maxHp
+					} else {
+						if (newValue < 0) newValue = 0
+					}
 
-				return { ...p, [stat]: newValue }
+					return { ...p, [stat]: newValue }
 			})
 		)
 	}
@@ -102,14 +127,15 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 			prev.map(p => ({
 				...p,
 				...initialStats,
-				hasEpicResurrection: false, // Сбрасываем и этот флаг
+				hasEpicResurrection: false,
+				isLoser: false,
 			}))
 		)
 	}
 
 	return (
 		<GameContext.Provider
-			value={{ players, updateStat, toggleEpicResurrection, resetGame }}
+			value={{ players, updateStat, toggleEpicResurrection, toggleLoser, resetGame }}
 		>
 			{children}
 		</GameContext.Provider>

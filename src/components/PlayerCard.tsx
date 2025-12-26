@@ -1,120 +1,167 @@
 import { useGame } from '../context/GameContext'
 import type { Player, PlayerStats } from '../context/GameContext' // <--- Добавили "type"
 import { StatCounter } from './StatCounter'
-import { Heart, Skull, ZapOff, Ghost, Gem, Trophy, Sparkles } from 'lucide-react'
+import {
+	Heart,
+	Skull,
+	ZapOff,
+	Ghost,
+	Gem,
+	Trophy,
+	Sparkles,
+	Frown,
+} from 'lucide-react' // Добавили Frown (грустный смайл)
 import { motion } from 'framer-motion'
 
 export const PlayerCard = ({ player }: { player: Player }) => {
-	const { updateStat, toggleEpicResurrection } = useGame()
+	const { updateStat, toggleEpicResurrection, toggleLoser } = useGame()
 
 	const handleUpdate = (stat: keyof PlayerStats, delta: number) => {
 		updateStat(player.id, stat, delta)
 	}
 
+	// Вычисляем, какой текст показывать над жизнями
+	const maxHpLabel = player.isLoser ? 'MAX 15' : 'MAX 25'
+
 	return (
-		<div className='w-full bg-slate-800/50 rounded-3xl p-4 border border-white/10 shadow-xl mb-6 last:mb-24'>
-			{/* Заголовок с именем */}
-			<div className='mb-4 px-2 border-b border-white/10 pb-2'>
+		<div
+			className={`w-full rounded-3xl p-4 border shadow-xl mb-6 last:mb-24 transition-colors duration-500 ${
+				player.isLoser
+					
+					? 'bg-slate-800/50 border-white/10'
+					: 'bg-slate-800/50 border-white/10'
+			}`}
+		>
+			<div className='mb-4 px-2 border-b border-white/10 pb-2 flex justify-between items-center'>
 				<h3 className='text-2xl font-black text-white tracking-wide'>
 					{player.name}
 				</h3>
+				{player.isLoser && (
+					<span className='text-xs font-bold bg-green-700 px-2 py-1 rounded text-white animate-pulse'>
+						LOSER
+					</span>
+				)}
 			</div>
 
-			{/* Сетка счетчиков */}
 			<div className='grid grid-cols-2 gap-3'>
-				{/* Жизни (HP) - Главный блок */}
-				<div className='col-span-2 mb-2'>
+				{/* Жизни */}
+				<div className='col-span-2 space-y-2 mb-2'>
 					<StatCounter
-						label='Здоровье (MAX 25)'
+						label={`Здоровье (${maxHpLabel})`}
 						value={player.hp}
 						icon={
 							<Heart size={18} fill={player.hp > 0 ? 'currentColor' : 'none'} />
 						}
-						colorClass='text-red-500'
+						colorClass={player.isLoser ? 'text-green-700' : 'text-red-500'}
 						onIncrement={() => handleUpdate('hp', 1)}
 						onDecrement={() => handleUpdate('hp', -1)}
 						isMain={true}
 					/>
 
-					{/* --- ПЕРЕКЛЮЧАТЕЛЬ ВОСКРЕШЕНИЯ --- */}
-					<div
-						onClick={() => toggleEpicResurrection(player.id)}
-						className='flex items-center justify-center gap-3 py-2 px-3 rounded-xl bg-black/20 cursor-pointer border border-white/5 hover:bg-black/30 transition-colors'
-					>
+					<div className='flex gap-2'>
+						{/* 1. Переключатель Воскрешения */}
 						<div
-							className={`text-xs font-bold uppercase transition-colors ${
-								player.hasEpicResurrection
-									? 'text-yellow-400'
-									: 'text-slate-500'
-							}`}
+							onClick={() => toggleEpicResurrection(player.id)}
+							className='flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-xl bg-black/20 cursor-pointer border border-white/5 hover:bg-black/30 transition-colors'
 						>
-							Воскрешение до 25
+							<div className='flex items-center gap-2'>
+								<div
+									className={`w-8 h-5 rounded-full p-1 flex items-center transition-colors duration-300 ${
+										player.hasEpicResurrection
+											? 'bg-yellow-500'
+											: 'bg-slate-700'
+									}`}
+								>
+									<motion.div
+										className='w-3 h-3 bg-white rounded-full shadow-md'
+										layout
+										transition={{ type: 'spring', stiffness: 700, damping: 30 }}
+										style={{
+											marginLeft: player.hasEpicResurrection ? 'auto' : '0',
+										}}
+									/>
+								</div>
+								{player.hasEpicResurrection && (
+									<Sparkles size={12} className='text-yellow-400' />
+								)}
+							</div>
+							<div
+								className={`text-[10px] font-bold uppercase text-center leading-tight ${
+									player.hasEpicResurrection
+										? 'text-yellow-400'
+										: 'text-slate-500'
+								}`}
+							>
+								Воскрес. 25
+							</div>
 						</div>
 
-						{/* Сам свитч */}
+						{/* 2. Переключатель ЛОШАРЫ */}
 						<div
-							className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 flex ${
-								player.hasEpicResurrection ? 'bg-yellow-500' : 'bg-slate-700'
-							}`}
+							onClick={() => toggleLoser(player.id)}
+							className='flex-1 flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-xl bg-black/20 cursor-pointer border border-white/5 hover:bg-black/30 transition-colors'
 						>
-							<motion.div
-								className='w-4 h-4 bg-white rounded-full shadow-md'
-								layout
-								transition={{ type: 'spring', stiffness: 700, damping: 30 }}
-								style={{
-									marginLeft: player.hasEpicResurrection ? 'auto' : '0',
-								}}
-							/>
+							<div className='flex items-center gap-2'>
+								<div
+									className={`w-8 h-5 rounded-full p-1 flex items-center transition-colors duration-300 ${
+										player.isLoser ? 'bg-green-700' : 'bg-slate-700'
+									}`}
+								>
+									<motion.div
+										className='w-3 h-3 bg-white rounded-full shadow-md'
+										layout
+										transition={{ type: 'spring', stiffness: 700, damping: 30 }}
+										style={{ marginLeft: player.isLoser ? 'auto' : '0' }}
+									/>
+								</div>
+								{player.isLoser && (
+									<Frown size={12} className='text-green-700' />
+								)}
+							</div>
+							<div
+								className={`text-[10px] font-bold uppercase text-center leading-tight ${
+									player.isLoser ? 'text-green-700' : 'text-slate-500'
+								}`}
+							>
+								Лошара (15)
+							</div>
 						</div>
-
-						{player.hasEpicResurrection && (
-							<Sparkles size={14} className='text-yellow-400 animate-pulse' />
-						)}
 					</div>
-					{/* -------------------------------- */}
 				</div>
 
-				{/* Жетоны дохлого колдуна */}
+				{/* Остальные счетчики */}
 				<StatCounter
 					label='Дохлый колдун'
 					value={player.deadWizards}
 					icon={<Skull size={16} />}
-					colorClass='text-slate-600'
+					colorClass='text-slate-400'
 					onIncrement={() => handleUpdate('deadWizards', 1)}
 					onDecrement={() => handleUpdate('deadWizards', -1)}
 				/>
-
-				{/* Вялые палочки */}
 				<StatCounter
 					label='Вялые палочки'
 					value={player.limpWands}
 					icon={<ZapOff size={16} />}
-					colorClass='text-green-500'
+					colorClass='text-pink-400'
 					onIncrement={() => handleUpdate('limpWands', 1)}
 					onDecrement={() => handleUpdate('limpWands', -1)}
 				/>
-
-				{/* Твари */}
 				<StatCounter
 					label='Твари'
 					value={player.creatures}
 					icon={<Ghost size={16} />}
-					colorClass='text-red-500'
+					colorClass='text-red-600'
 					onIncrement={() => handleUpdate('creatures', 1)}
 					onDecrement={() => handleUpdate('creatures', -1)}
 				/>
-
-				{/* Сокровища */}
 				<StatCounter
 					label='Сокровища'
 					value={player.treasures}
 					icon={<Gem size={16} />}
-					colorClass='text-slate-400'
+					colorClass='text-blue-400'
 					onIncrement={() => handleUpdate('treasures', 1)}
 					onDecrement={() => handleUpdate('treasures', -1)}
 				/>
-
-				{/* Легенды */}
 				<StatCounter
 					label='Легенды'
 					value={player.legends}

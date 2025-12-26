@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"homepage": "https://stepan41k.github.io/ESBM-tool",
+	"homepage": "https://stepan41k.github.io/ESBM-tool/",
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",

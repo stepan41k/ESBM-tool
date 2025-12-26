@@ -9,6 +9,7 @@ export interface PlayerStats {
 	creatures: number
 	treasures: number
 	legends: number
+	permanentSpells: number
 }
 
 export interface Player extends PlayerStats {
@@ -36,6 +37,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 		creatures: 0,
 		treasures: 0,
 		legends: 0,
+		permanentSpells: 0,
 	}
 
 	const [players, setPlayers] = useState<Player[]>([

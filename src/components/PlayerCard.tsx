@@ -161,6 +161,7 @@ export const PlayerCard = ({ player }: { player: Player }) => {
 					onIncrement={() => handleUpdate('treasures', 1)}
 					onDecrement={() => handleUpdate('treasures', -1)}
 				/>
+
 				<StatCounter
 					label='Легенды'
 					value={player.legends}
@@ -168,6 +169,14 @@ export const PlayerCard = ({ player }: { player: Player }) => {
 					colorClass='text-yellow-400'
 					onIncrement={() => handleUpdate('legends', 1)}
 					onDecrement={() => handleUpdate('legends', -1)}
+				/>
+				<StatCounter
+					label='Постоянки'
+					value={player.permanentSpells}
+					icon={<Trophy size={16} />}
+					colorClass='text-purple-500'
+					onIncrement={() => handleUpdate('permanentSpells', 1)}
+					onDecrement={() => handleUpdate('permanentSpells', -1)}
 				/>
 			</div>
 		</div>

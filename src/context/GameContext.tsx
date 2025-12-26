@@ -1,70 +1,115 @@
 import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 
-// Описываем типы
-interface Player {
+// Типы ресурсов
+export interface PlayerStats {
+	hp: number
+	deadWizards: number
+	limpWands: number
+	creatures: number
+	treasures: number
+	legends: number
+}
+
+export interface Player extends PlayerStats {
 	id: number
 	name: string
-	score: number
+	hasEpicResurrection: boolean // <--- НОВОЕ ПОЛЕ
 }
 
 interface GameContextType {
 	players: Player[]
-	activePlayerIdx: number
-	diceValue: number
-	isRolling: boolean
-	rollDice: () => void
-	nextTurn: () => void
+	updateStat: (playerId: number, stat: keyof PlayerStats, delta: number) => void
+	toggleEpicResurrection: (playerId: number) => void // <--- НОВАЯ ФУНКЦИЯ
+	resetGame: () => void
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined)
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-	const [players, setPlayers] = useState<Player[]>([
-		{ id: 1, name: 'Игрок 1', score: 0 },
-		{ id: 2, name: 'Игрок 2', score: 0 },
-	])
-	const [activePlayerIdx, setActivePlayerIdx] = useState(0)
-	const [diceValue, setDiceValue] = useState(1)
-	const [isRolling, setIsRolling] = useState(false)
-
-	const rollDice = () => {
-		if (isRolling) return
-		setIsRolling(true)
-
-		setTimeout(() => {
-			const result = Math.floor(Math.random() * 6) + 1
-			setDiceValue(result)
-			setIsRolling(false)
-			updateScore(result)
-		}, 600)
+	const initialStats: PlayerStats = {
+		hp: 20,
+		deadWizards: 0,
+		limpWands: 0,
+		creatures: 0,
+		treasures: 0,
+		legends: 0,
 	}
 
-	const updateScore = (points: number) => {
+	const [players, setPlayers] = useState<Player[]>([
+		// Добавляем флаг false по умолчанию
+		{ id: 1, name: 'Колдун 1', ...initialStats, hasEpicResurrection: false },
+	])
+
+	// Переключатель свойства
+	const toggleEpicResurrection = (playerId: number) => {
 		setPlayers(prev =>
-			prev.map((p, idx) => {
-				if (idx === activePlayerIdx) {
-					return { ...p, score: p.score + points }
+			prev.map(p =>
+				p.id === playerId
+					? { ...p, hasEpicResurrection: !p.hasEpicResurrection }
+					: p
+			)
+		)
+	}
+
+	const updateStat = (
+		playerId: number,
+		stat: keyof PlayerStats,
+		delta: number
+	) => {
+		setPlayers(prev =>
+			prev.map(p => {
+				if (p.id !== playerId) return p
+
+				let newValue = p[stat] + delta
+
+				// ЛОГИКА ДЛЯ ЗДОРОВЬЯ
+				if (stat === 'hp') {
+					// СМЕРТЬ
+					if (newValue <= 0) {
+						setTimeout(() => {
+							setPlayers(currentPlayers =>
+								currentPlayers.map(cp => {
+									if (cp.id !== playerId) return cp
+
+									// <--- ПРОВЕРКА ФЛАГА ЗДЕСЬ
+									const targetHp = cp.hasEpicResurrection ? 25 : 20
+
+									return {
+										...cp,
+										hp: targetHp,
+										deadWizards: cp.deadWizards + 1,
+									}
+								})
+							)
+						}, 1000)
+
+						return { ...p, hp: 0 }
+					}
+
+					if (newValue > 25) newValue = 25
+				} else {
+					if (newValue < 0) newValue = 0
 				}
-				return p
+
+				return { ...p, [stat]: newValue }
 			})
 		)
 	}
 
-	const nextTurn = () => {
-		setActivePlayerIdx(prev => (prev + 1) % players.length)
+	const resetGame = () => {
+		setPlayers(prev =>
+			prev.map(p => ({
+				...p,
+				...initialStats,
+				hasEpicResurrection: false, // Сбрасываем и этот флаг
+			}))
+		)
 	}
 
 	return (
 		<GameContext.Provider
-			value={{
-				players,
-				activePlayerIdx,
-				diceValue,
-				isRolling,
-				rollDice,
-				nextTurn,
-			}}
+			value={{ players, updateStat, toggleEpicResurrection, resetGame }}
 		>
 			{children}
 		</GameContext.Provider>
@@ -73,8 +118,6 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
 
 export const useGame = () => {
 	const context = useContext(GameContext)
-	if (!context) {
-		throw new Error('useGame must be used within a GameProvider')
-	}
+	if (!context) throw new Error('useGame must be used within a GameProvider')
 	return context
 }

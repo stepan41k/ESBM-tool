@@ -27,7 +27,6 @@ export const PlayerCard = ({ player }: { player: Player }) => {
 		<div
 			className={`w-full rounded-3xl p-4 border shadow-xl mb-6 last:mb-24 transition-colors duration-500 ${
 				player.isLoser
-					
 					? 'bg-slate-800/50 border-white/10'
 					: 'bg-slate-800/50 border-white/10'
 			}`}
@@ -134,7 +133,7 @@ export const PlayerCard = ({ player }: { player: Player }) => {
 					label='Дохлый колдун'
 					value={player.deadWizards}
 					icon={<Skull size={16} />}
-					colorClass='text-slate-400'
+					colorClass='text-slate-600'
 					onIncrement={() => handleUpdate('deadWizards', 1)}
 					onDecrement={() => handleUpdate('deadWizards', -1)}
 				/>
@@ -142,7 +141,7 @@ export const PlayerCard = ({ player }: { player: Player }) => {
 					label='Вялые палочки'
 					value={player.limpWands}
 					icon={<ZapOff size={16} />}
-					colorClass='text-pink-400'
+					colorClass='text-green-600'
 					onIncrement={() => handleUpdate('limpWands', 1)}
 					onDecrement={() => handleUpdate('limpWands', -1)}
 				/>
@@ -158,7 +157,7 @@ export const PlayerCard = ({ player }: { player: Player }) => {
 					label='Сокровища'
 					value={player.treasures}
 					icon={<Gem size={16} />}
-					colorClass='text-blue-400'
+					colorClass='text-slate-400'
 					onIncrement={() => handleUpdate('treasures', 1)}
 					onDecrement={() => handleUpdate('treasures', -1)}
 				/>

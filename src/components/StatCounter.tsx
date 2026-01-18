@@ -1,32 +1,7 @@
-import { useEffect, useRef } from 'react'
-import type { ReactNode } from 'react'
+import { motion } from 'framer-motion'
 import { Minus, Plus } from 'lucide-react'
-import { motion, useSpring, useTransform } from 'framer-motion'
+import type { ReactNode } from 'react'
 
-// Под-компонент для анимации чисел
-function AnimatedNumber({ value }: { value: number }) {
-	// Создаем пружинную анимацию
-	const spring = useSpring(value, { mass: 0.8, stiffness: 75, damping: 15 })
-	const display = useTransform(spring, current => Math.round(current))
-
-	useEffect(() => {
-		spring.set(value)
-	}, [value, spring])
-
-	// Используем ref для прямого изменения текста без ре-рендера React (оптимизация)
-	const ref = useRef<HTMLSpanElement>(null)
-
-	useEffect(() => {
-		const unsubscribe = display.on('change', latest => {
-			if (ref.current) {
-				ref.current.textContent = latest.toString()
-			}
-		})
-		return unsubscribe
-	}, [display])
-
-	return <span ref={ref}>{value}</span>
-}
 
 interface StatCounterProps {
 	label: string
@@ -77,7 +52,7 @@ export const StatCounter = ({
 						isMain ? 'text-5xl' : 'text-2xl'
 					} text-white flex justify-center w-24`}
 				>
-					<AnimatedNumber value={value} />
+					<span>{value}</span>
 				</div>
 
 				<motion.button

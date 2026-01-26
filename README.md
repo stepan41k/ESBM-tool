@@ -71,5 +71,5 @@
    cd ESBM-tool
 
 2. **Деплой**
-3. ```bash
+    ```bash
    npm run deploy

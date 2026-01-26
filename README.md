@@ -70,6 +70,10 @@
    git clone https://github.com/USERNAME/ESBM-tool.git
    cd ESBM-tool
 
-2. **Деплой**
+2. **Сборка**
+    ```bash
+   npm run build
+
+3. **Деплой**
     ```bash
    npm run deploy

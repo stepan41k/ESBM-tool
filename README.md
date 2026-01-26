@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# 🧙‍♂️ ESBM: Annihilageddon Companion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Мобильное приложение-компаньон для настольной игры "Эпичные схватки боевых магов: Крутагидон".**
 
-Currently, two official plugins are available:
+Забудьте о горе картонных жетонов и постоянном пересчете очков. Это приложение берет всю рутину на себя, позволяя вам сосредоточиться на уничтожении врагов!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Возможности
 
-## Expanding the ESLint configuration
+Приложение полностью заменяет планшет игрока и автоматизирует правила игры:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### ❤️ Умная система здоровья
+*   **Счетчик жизней:** Ограничен максимумом (25) и минимумом (0).
+*   **Авто-воскрешение:** Если здоровье падает до 0, приложение автоматически:
+    1.  Ждет завершения анимации смерти.
+    2.  Восстанавливает жизни до 20 (или другого значения в зависимости от бонусов).
+    3.  Автоматически добавляет жетон **"Дохлый колдун"** 💀.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### ⚙️ Поддержка особых правил
+*   **Режим "Эпичное воскрешение":** Тумблер для свойств типа "Медальон". Если включен, колдун воскрешается с **25 HP**.
+*   **Режим "Лошара":** Тумблер для жетона "Лошара". Срезает максимальное здоровье до **15 HP** (даже если есть медальон) и окрашивает карточку игрока в цвет позора (фиолетовый).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🎒 Инвентарь токенов
+Удобные счетчики для всех игровых ресурсов:
+*   💀 Дохлый колдун
+*   🪄 Вялая палочка
+*   👻 Твари
+*   💎 Сокровища
+*   🏆 Легенды
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🎨 UI/UX
+*   **Dark Neon Design:** Стильная темная тема, которая не слепит глаза и подходит под атмосферу игры.
+*   **Анимации:** Плавная прокрутка чисел (как в игровых автоматах) и микро-взаимодействия на Framer Motion.
+*   **Mobile First:** Интерфейс оптимизирован для телефонов (большие кнопки, отсутствие зума).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📸 Скриншоты
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<!-- Если сделаешь скриншот, положи его в корень и раскомментируй строку ниже -->
+<!-- ![App Screenshot](./screenshot.png) -->
+
+| Обычный режим | Режим "Лошара" |
+|:---:|:---:|
+| *Здесь может быть ваш скриншот* | *Фиолетовая подсветка и лимит 15 HP* |
+
+---
+
+## 🛠 Технологии
+
+*   **Core:** React 18 + TypeScript
+*   **Build Tool:** Vite
+*   **Styling:** Tailwind CSS v4 (PostCSS)
+*   **Animations:** Framer Motion
+*   **Icons:** Lucide React
+*   **Deploy:** GitHub Pages
+
+---
+
+## 🚀 Запуск локально
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/USERNAME/ESBM-tool.git
+   cd ESBM-tool
+
+2. **Деплой**
+3. ```bash
+   npm run deploy
